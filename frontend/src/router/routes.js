@@ -2,15 +2,64 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/LoginPage.vue') },
+      { path: 'home', component: () => import('pages/IndexPage.vue') }
+    ]
   },
 
-  // Always leave this as last one,
-  // but you can also remove it
+  {
+    path: '/admin',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/AdminDashboard.vue') }
+    ]
+  },
+
+  
+  {
+    path: '/nalozi',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/nalozi/NaloziIndex.vue') },
+      { path: 'ove-godine', component: () => import('pages/nalozi/NaloziOveGodine.vue') },
+      { path: 'nadolazeci', component: () => import('pages/nalozi/NaloziNadolazeci.vue') },
+      { path: 'kasni', component: () => import('pages/nalozi/NaloziKasne.vue') }
+    ]
+  },
+
+  
+  {
+    path: '/notifikacije',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: 'tjedan', component: () => import('pages/notifikacije/NotifikacijeTjedan.vue') }
+    ]
+  },
+
+
+  {
+    path: '/kategorije',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/kategorije/KategorijeIndex.vue') }
+    ]
+  },
+
+ 
+  {
+    path: '/notifikacije-pravila',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/notifikacije/NotifikacijePravila.vue') }
+    ]
+  },
+
+  
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
-  },
+    component: () => import('pages/ErrorNotFound.vue')
+  }
 ]
 
 export default routes
