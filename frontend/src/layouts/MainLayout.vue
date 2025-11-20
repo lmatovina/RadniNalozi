@@ -11,12 +11,12 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list padding>
 
-        <q-item clickable v-ripple to="/admin">
-          <q-item-section avatar>
-            <q-icon name="dashboard" />
-          </q-item-section>
-          <q-item-section>Dashboard</q-item-section>
-        </q-item>
+        <q-item clickable v-ripple to="/admin" v-if="isSupervizor">
+  <q-item-section avatar>
+    <q-icon name="dashboard" />
+  </q-item-section>
+  <q-item-section>Dashboard</q-item-section>
+</q-item>
 
         <q-item clickable v-ripple to="/nalozi">
           <q-item-section avatar>
@@ -49,11 +49,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {  computed} from 'vue'
+import { user } from '../stores/userStore'
 
-const leftDrawerOpen = ref(false)
 
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+
+const isSupervizor = computed(() => user.value?.je_supervizor === 1)
 </script>
+

@@ -6,17 +6,9 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
+import { user } from '../stores/userStore.js'   // <-- OVDJE
 
-/*
- * If not building with SSR mode, you can
- * directly export the Router instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Router instance.
- */
-
-export default defineRouter(function (/* { store, ssrContext } */) {
+export default defineRouter(function () {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : process.env.VUE_ROUTER_MODE === 'history'
@@ -26,12 +18,23 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
-
-    // Leave this as is and make changes in quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
+
+  // -----------------------------------------
+  //            AUTH GUARD OVDJE
+  // -----------------------------------------
+  Router.beforeEach((to, from, next) => {
+    // Ako ruta traži supervizora
+    if (to.meta.requiresSupervisor) {
+      if (!user.value || !user.value.je_supervizor) {
+        return next('/home')
+      }
+    }
+
+    next()
+  })
+  // -----------------------------------------
 
   return Router
 })

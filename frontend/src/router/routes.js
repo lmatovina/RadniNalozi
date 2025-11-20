@@ -11,9 +11,14 @@ const routes = [
   {
     path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresSupervisor: true },
     children: [
-      { path: '', component: () => import('pages/AdminDashboard.vue') }
-    ]
+    { 
+      path: '', 
+      component: () => import('pages/AdminDashboard.vue'),
+      meta: { requiresSupervisor: true } 
+    }
+  ]
   },
 
   
