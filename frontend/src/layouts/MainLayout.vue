@@ -11,12 +11,12 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list padding>
 
-        <q-item clickable v-ripple to="/admin" v-if="isSupervizor">
-  <q-item-section avatar>
-    <q-icon name="dashboard" />
-  </q-item-section>
-  <q-item-section>Dashboard</q-item-section>
-</q-item>
+      <q-item clickable v-ripple to="/admin" v-if="isSupervizor">
+      <q-item-section avatar>
+        <q-icon name="dashboard" />
+      </q-item-section>
+      <q-item-section>Dashboard</q-item-section>
+    </q-item>
 
         <q-item clickable v-ripple to="/nalozi">
           <q-item-section avatar>

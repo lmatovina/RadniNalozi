@@ -23,6 +23,7 @@ const routes = [
 
   
   {
+    
     path: '/nalozi',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -30,8 +31,23 @@ const routes = [
       { path: 'ove-godine', component: () => import('pages/nalozi/NaloziOveGodine.vue') },
       { path: 'nadolazeci', component: () => import('pages/nalozi/NaloziNadolazeci.vue') },
       { path: 'kasni', component: () => import('pages/nalozi/NaloziKasne.vue') }
+      
     ]
   },
+
+  // NOVA RUTA
+{
+  path: '/admin', 
+  component: () => import('layouts/MainLayout.vue'), // Koristi isti layout
+  children: [
+    
+    { 
+      path: 'admin-list', 
+      component: () => import('pages/admin/AdminList.vue') 
+    },
+    
+  ]
+},
 
   
   {

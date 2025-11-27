@@ -32,6 +32,12 @@
     </q-card>
   </div>
 
+    <div class="col-12 col-md-3">
+    <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('admin-list')">
+      <div class="text-subtitle1">Administracija korisnika</div>
+    </q-card>
+  </div>
+
 </div>
 
 
@@ -68,8 +74,11 @@
           />
         </div>
 
+
+
       </div>
 
+      
     </div>
 
   </q-page>
@@ -90,11 +99,19 @@ function goToOrders() {
 function goToNotifications() {
   router.push('/notifikacije-pravila')
 }
+
+ 
 function go(section) {
   if (section === 'notifikacije-tjedan') {
     router.push('/notifikacije/tjedan')
     return
   }
+
+    if (section === 'admin-list') {
+    router.push('/admin/admin-list')
+    return
+  }
+ 
 
   router.push(`/nalozi/${section}`)
 }
