@@ -38,6 +38,12 @@
     </q-card>
   </div>
 
+  <div class="col-12 col-md-3">
+        <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('uloge-manager')">
+          <div class="text-subtitle1">Upravljanje ulogama (timovi)</div>
+        </q-card>
+    </div>
+
 </div>
 
 
@@ -112,6 +118,10 @@ function go(section) {
     return
   }
  
+  if (section === 'uloge-manager') {
+    router.push('/admin/uloge-manager')
+    return
+  }
 
   router.push(`/nalozi/${section}`)
 }

@@ -45,6 +45,11 @@ const routes = [
       path: 'admin-list', 
       component: () => import('pages/admin/AdminList.vue') 
     },
+
+    {
+      path: 'uloge-manager', 
+      component: () => import('pages/admin/UlogeManager.vue') 
+    },
     
   ]
 },
