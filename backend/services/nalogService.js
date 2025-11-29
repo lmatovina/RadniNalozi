@@ -38,7 +38,7 @@ export const getNadolazeciNalozi = async (dani) => {
 
   return rows;
 };
-/*
+
 export const createNalog = async (data) => {
   const {
     uloga_id,
@@ -52,20 +52,87 @@ export const createNalog = async (data) => {
 
   const [result] = await db.query(
     `
-    INSERT INTO Nalog 
+    INSERT INTO Nalog
       (uloga_id, tip_naloga_id, kreirao_korisnik_id, naziv, sadrzaj, rok_zavrsetka, godina_oznaka)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `,
+    VALUES
+      (?, ?, ?, ?, ?, ?, ?)
+    `,
     [
       uloga_id,
-      tip_naloga_id,
+      tip_naloga_id || null,
       kreirao_korisnik_id,
       naziv,
       sadrzaj,
       rok_zavrsetka,
       godina_oznaka,
-    ]
+    ] 
   );
 
   return result.insertId;
-};*/
+};
+
+
+export const updateNalog = async (id, data) => {
+  const {
+    uloga_id,
+    tip_naloga_id,
+    naziv,
+    sadrzaj,
+    rok_zavrsetka,
+    godina_oznaka,
+    status, // opcionalno
+  } = data;
+
+  const [result] = await db.query(
+    `
+    UPDATE Nalog
+    SET
+      uloga_id = ?,
+      tip_naloga_id = ?,
+      naziv = ?,
+      sadrzaj = ?,
+      rok_zavrsetka = ?,
+      godina_oznaka = ?,
+      status = COALESCE(?, status)
+    WHERE id = ?
+    `,
+    [
+      uloga_id,
+      tip_naloga_id || null,
+      naziv,
+      sadrzaj,
+      rok_zavrsetka,
+      godina_oznaka,
+      status || null,
+      id,
+    ]
+  );
+
+  return result.affectedRows > 0;
+};
+
+export const deleteNalog = async (id) => {
+  const [result] = await db.query(
+    `DELETE FROM Nalog WHERE id = ?`,
+    [id]
+  );
+  return result.affectedRows > 0;
+};
+
+export const getAllTipoviNaloga = async () => {
+  const [rows] = await db.query(`
+    SELECT id, naziv
+    FROM TipNaloga
+    ORDER BY naziv
+  `)
+  return rows
+}
+
+export const getAllUloge = async () => {
+  const [rows] = await db.query(`
+    SELECT id, naziv
+    FROM Uloga
+    ORDER BY naziv
+  `)
+  return rows
+}

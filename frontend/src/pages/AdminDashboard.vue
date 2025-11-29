@@ -38,6 +38,12 @@
     </q-card>
   </div>
 
+  <div class="col-12 col-md-3">
+    <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('novi')">
+      <div class="text-subtitle1">Kreiranje novih naloga</div>
+    </q-card>
+  </div>
+
 </div>
 
 

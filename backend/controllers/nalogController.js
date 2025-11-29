@@ -20,16 +20,17 @@ export const getNalogById = async (req, res) => {
     res.status(500).json({ error: "Greška na serveru" });
   }
 };
-/*
+
+// POST /api/nalozi
 export const createNalog = async (req, res) => {
   try {
     const newId = await nalogService.createNalog(req.body);
-    res.json({ id: newId, poruka: "Nalog uspješno kreiran" });
+    res.status(201).json({ id: newId, poruka: "Nalog uspješno kreiran" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Greška pri kreiranju naloga" });
   }
-};*/
+};
 
 export const getNaloziByYear = async (req, res) => {
   try {
@@ -61,5 +62,25 @@ export const getNadolazeciNalozi = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Greška na serveru" });
+  }
+};
+
+export const getTipoviNaloga = async (req, res) => {
+  try {
+    const tipovi = await nalogService.getAllTipoviNaloga()
+    res.json(tipovi)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Greška na serveru' })
+  }
+};
+
+export const getUloge = async (req, res) => {
+  try {
+    const uloge = await nalogService.getAllUloge()
+    res.json(uloge)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Greška na serveru' })
   }
 };
