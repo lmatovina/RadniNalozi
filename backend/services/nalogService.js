@@ -40,6 +40,8 @@ export const getNadolazeciNalozi = async (dani) => {
 };
 
 export const createNalog = async (data) => {
+  console.log('=== CREATE NALOG DATA ===', JSON.stringify(data, null, 2));
+  
   const {
     uloga_id,
     tip_naloga_id,
@@ -49,27 +51,20 @@ export const createNalog = async (data) => {
     rok_zavrsetka,
     godina_oznaka,
   } = data;
-
+  
+  console.log('=== RAZBJEŽENA DATA ===', {uloga_id, tip_naloga_id, kreirao_korisnik_id, naziv});
+  
+  const values = [uloga_id, tip_naloga_id || null, kreirao_korisnik_id, naziv, sadrzaj, rok_zavrsetka, godina_oznaka];
+  console.log('=== VALUES ARRAY ===', values);
+  
   const [result] = await db.query(
-    `
-    INSERT INTO Nalog
-      (uloga_id, tip_naloga_id, kreirao_korisnik_id, naziv, sadrzaj, rok_zavrsetka, godina_oznaka)
-    VALUES
-      (?, ?, ?, ?, ?, ?, ?)
-    `,
-    [
-      uloga_id,
-      tip_naloga_id || null,
-      kreirao_korisnik_id,
-      naziv,
-      sadrzaj,
-      rok_zavrsetka,
-      godina_oznaka,
-    ] 
+    `INSERT INTO Nalog (uloga_id, tip_naloga_id, kreirao_korisnik_id, naziv, sadrzaj, rok_zavrsetka, godina_oznaka) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    values
   );
-
+  
   return result.insertId;
 };
+
 
 
 export const updateNalog = async (id, data) => {

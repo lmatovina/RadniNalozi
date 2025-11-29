@@ -21,7 +21,7 @@ export const getNalogById = async (req, res) => {
   }
 };
 
-// POST /api/nalozi
+// POST /api/nalozi/novi
 export const createNalog = async (req, res) => {
   try {
     const newId = await nalogService.createNalog(req.body);

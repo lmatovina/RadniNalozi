@@ -149,8 +149,13 @@ const spremiNalog = async () => {
   const kreirao_korisnik_id = JSON.parse(localStorage.getItem('user'))?.id || 1
   
   const nalogData = {
-    ...form.value,
-    kreirao_korisnik_id
+    uloga_id: form.value.uloga_id?.id || form.value.uloga_id,
+    tip_naloga_id: form.value.tip_naloga_id?.id || form.value.tip_naloga_id,
+    kreirao_korisnik_id,
+    naziv: form.value.naziv,
+    sadrzaj: form.value.sadrzaj,
+    rok_zavrsetka: form.value.rok_zavrsetka,
+    godina_oznaka: form.value.godina_oznaka
   }
   
   if (!editId.value) {
@@ -161,6 +166,7 @@ const spremiNalog = async () => {
   await ucitajNaloze()
   novoKlik()
 }
+
 
 
 const obrisiNalog = async () => {
