@@ -56,14 +56,6 @@
         outlined
         class="q-mb-sm"
       />
-      <q-input
-        v-model="form.godina_oznaka"
-        label="Godina (YYYY)"
-        dense
-        outlined
-        class="q-mb-sm"
-      />
-
       <div class="q-gutter-sm q-mt-sm">
         <q-btn type="submit" color="primary" :label="editId ? 'Spremi izmjene' : 'Kreiraj nalog'" />
         <q-btn v-if="editId" flat color="negative" label="Obriši nalog" @click="obrisiNalog" />
@@ -82,7 +74,7 @@ import {
   deleteNalog,
   getAllUloge,
   getAllTipoviNaloga
-} from 'src/services/naloziService' // prilagodi path
+} from 'src/services/naloziService'
 
 
 const uloge = ref([])
@@ -92,11 +84,10 @@ const editId = ref(null)
 const form = ref({
   uloga_id: null,
   tip_naloga_id: null,
-  kreirao_korisnik_id: null, // napunit ćeš iz auth store-a
+  kreirao_korisnik_id: null,
   naziv: '',
   sadrzaj: '',
-  rok_zavrsetka: '',
-  godina_oznaka: ''
+  rok_zavrsetka: ''
 })
 
 const columns = [
@@ -127,8 +118,7 @@ const novoKlik = () => {
     kreirao_korisnik_id: null,
     naziv: '',
     sadrzaj: '',
-    rok_zavrsetka: '',
-    godina_oznaka: ''
+    rok_zavrsetka: ''
   }
 }
 
@@ -140,8 +130,7 @@ const rowKlik = (_, row) => {
     kreirao_korisnik_id: row.kreirao_korisnik_id,
     naziv: row.naziv,
     sadrzaj: row.sadrzaj,
-    rok_zavrsetka: row.rok_zavrsetka,
-    godina_oznaka: row.godina_oznaka
+    rok_zavrsetka: row.rok_zavrsetka
   }
 }
 
@@ -154,8 +143,7 @@ const spremiNalog = async () => {
     kreirao_korisnik_id,
     naziv: form.value.naziv,
     sadrzaj: form.value.sadrzaj,
-    rok_zavrsetka: form.value.rok_zavrsetka,
-    godina_oznaka: form.value.godina_oznaka
+    rok_zavrsetka: form.value.rok_zavrsetka
   }
   
   if (!editId.value) {
