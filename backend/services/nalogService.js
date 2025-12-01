@@ -9,6 +9,7 @@ export const getAllNalozi = async () => {
   return rows;
 };
 
+
 export const getNalogById = async (id) => {
   const [rows] = await db.query(
     `SELECT * FROM Nalog WHERE id = ?`,
@@ -18,9 +19,13 @@ export const getNalogById = async (id) => {
 };
 
 export const getNaloziByYear = async (year) => {
+
+  const now = new Date();
+  const godina_oznaka = getAcademicYearStart(now);
+
   const [rows] = await db.query(
     `SELECT * FROM Nalog WHERE godina_oznaka = ? ORDER BY datum_nastanka DESC`,
-    [year]
+    [godina_oznaka]
   );
   return rows;
 };
@@ -39,8 +44,17 @@ export const getNadolazeciNalozi = async (dani) => {
   return rows;
 };
 
+function getAcademicYearStart(date) {
+  const d = new Date(date);
+  const m = d.getMonth() + 1;
+  const y = d.getFullYear();
+  return m >= 10 ? y : y - 1;
+}
+
+
 export const createNalog = async (data) => {
   console.log('=== CREATE NALOG DATA ===', JSON.stringify(data, null, 2));
+  
   
   const {
     uloga_id,
@@ -49,14 +63,15 @@ export const createNalog = async (data) => {
     naziv,
     sadrzaj,
     rok_zavrsetka,
-    godina_oznaka,
   } = data;
-  
-  console.log('=== RAZBJEŽENA DATA ===', {uloga_id, tip_naloga_id, kreirao_korisnik_id, naziv});
+   const now = new Date();
+  const godina_oznaka = getAcademicYearStart(now);
+
+  console.log('=== RAZBJEŽENA DATA ===', {uloga_id, tip_naloga_id, kreirao_korisnik_id, naziv,godina_oznaka });
   
   const values = [uloga_id, tip_naloga_id || null, kreirao_korisnik_id, naziv, sadrzaj, rok_zavrsetka, godina_oznaka];
   console.log('=== VALUES ARRAY ===', values);
-  
+  console.log(new Date("2022-10-20"));
   const [result] = await db.query(
     `INSERT INTO Nalog (uloga_id, tip_naloga_id, kreirao_korisnik_id, naziv, sadrzaj, rok_zavrsetka, godina_oznaka) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     values
