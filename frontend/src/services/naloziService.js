@@ -25,13 +25,13 @@ export const getAllNalozi = async () => {
   return res.data
 }
 
-export const getNaloziByYear = async (year) => {
-  const res = await axios.get(`${API_URL}/godina/${year}`, { headers: getAuthHeader() })
+export const getNaloziByYear = async (page, limit) => {
+  const res = await axios.get(`${API_URL}/godina?page=${page}&limit=${limit}`, { headers: getAuthHeader() })
   return res.data
 }
 
-export const getNadolazeciNalozi = async (days) => {
-  const res = await axios.get(`${API_URL}/nadolazeci?dani=${days}`, { headers: getAuthHeader() })
+export const getNadolazeciNalozi = async (days, page, limit) => {
+  const res = await axios.get(`${API_URL}/nadolazeci?dani=${days}&page=${page}&limit=${limit}`, { headers: getAuthHeader() })
   return res.data
 }
 

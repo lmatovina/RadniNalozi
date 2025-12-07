@@ -18,30 +18,60 @@ export const getNalogById = async (id) => {
   return rows[0] || null;
 };
 
-export const getNaloziByYear = async (year) => {
-
+export const getNaloziByYear = async (page, limit) => {
   const now = new Date();
   const godina_oznaka = getAcademicYearStart(now);
+  page = Number(page) || 1;
+  limit = Number(limit) || 2;
 
+  const startIndex = (page - 1) * limit;
+  const endInedx = page * limit;
   const [rows] = await db.query(
-    `SELECT * FROM Nalog WHERE godina_oznaka = ? ORDER BY datum_nastanka DESC`,
+    `SELECT * FROM Nalog WHERE godina_oznaka = ? ORDER BY datum_nastanka DESC LIMIT ? OFFSET ? `,
+    [godina_oznaka, limit, startIndex]
+  );
+  const [[{ total }]] = await db.query(
+    `SELECT COUNT(*) AS total FROM Nalog WHERE godina_oznaka = ?`,
     [godina_oznaka]
   );
-  return rows;
+  return {
+    data: rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
-export const getNadolazeciNalozi = async (dani) => {
+export const getNadolazeciNalozi = async (dani, page, limit) => {
+
+  page = Number(page) || 1;
+  limit = Number(limit) || 2;
+
+  const startIndex = (page - 1) * limit;
+  const endInedx = page * limit;
   const [rows] = await db.query(
     `
       SELECT *
       FROM Nalog
       WHERE rok_zavrsetka BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL ? DAY)
-      ORDER BY rok_zavrsetka ASC
+      ORDER BY rok_zavrsetka ASC LIMIT ? OFFSET ?
     `,
-    [dani]
+    [dani, limit, startIndex]
   );
 
-  return rows;
+  const [[{ total }]] = await db.query(
+    `SELECT COUNT(*) AS total FROM Nalog WHERE rok_zavrsetka BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL ? DAY)`,
+    [dani]
+  );
+  
+  return {
+    data: rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
 function getAcademicYearStart(date) {

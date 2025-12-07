@@ -32,10 +32,24 @@ export const createNalog = async (req, res) => {
   }
 };
 
-export const getNaloziByYear = async (req, res) => {
+/*export const getNaloziByYear = async (req, res) => {
   try {
     const year = req.params.year;
     const nalozi = await nalogService.getNaloziByYear(year);
+    res.json(nalozi);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Greška na serveru" });
+  }
+};*/
+export const getNaloziByYear = async (req, res) => {
+  try {
+    console.log("Query params:", req.query);
+    const page = parseInt(req.query.page, 10) || 1;      
+    const limit = parseInt(req.query.limit, 10) || 10; 
+
+    const nalozi = await nalogService.getNaloziByYear(page, limit);
+
     res.json(nalozi);
   } catch (err) {
     console.error(err);
@@ -46,24 +60,23 @@ export const getNaloziByYear = async (req, res) => {
 export const getNadolazeciNalozi = async (req, res) => {
   try {
     const dani = parseInt(req.query.dani);
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
 
     if (isNaN(dani) || dani <= 0) {
       return res.status(400).json({ error: "Parametar 'dani' mora biti broj > 0" });
     }
 
-    const nalozi = await nalogService.getNadolazeciNalozi(dani);
+    const result = await nalogService.getNadolazeciNalozi(dani, page, limit);
 
-     if (nalozi.length === 0) {
-      return res.status(404).json({ error: "Nema naloga u zadanom razdoblju" });
-    }
-    res.json(nalozi);
-    
+    res.json(result);
 
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Greška na serveru" });
   }
 };
+
 
 export const getTipoviNaloga = async (req, res) => {
   try {

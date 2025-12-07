@@ -16,6 +16,8 @@
       :rows="korisnici"
       :columns="columns"
       row-key="id"
+      v-model:pagination="pagination"
+      @request="onRequest"
       :loading="loading"
       :filter="filter"
       no-data-label="Nema dostupnih korisnika"
@@ -112,10 +114,8 @@
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-// Uklanjamo direktni import Axiosa.
-// Uklanjamo const API_URL.
 
-// ✅ Uvozimo sav servisni sloj za korisnike
+
 import * as KorisniciService from '../../services/korisniciService.js'; 
 
 
@@ -129,7 +129,6 @@ export default defineComponent({
     const showCreateDialog = ref(false);
     const isSaving = ref(false);
 
-    // Ovdje bi se dohvaćao ID trenutno prijavljenog korisnika
     const myUserId = ref(11); 
 
     const newKorisnik = ref({
@@ -153,20 +152,24 @@ export default defineComponent({
       },
     ];
 
-    /**
-     * Dohvaća listu svih korisnika s backend servisa
-     */
+    const pagination = ref({
+      page: 1,
+      rowsPerPage: 3,
+      rowsNumber: 0
+                  });
+
     const fetchKorisnici = async () => {
       loading.value = true;
       try {
-        // ✅ Korištenje servisne funkcije
-        const response = await KorisniciService.getAllKorisnici();
-        
-        // response je već array podataka (response.data iz servisa)
-        korisnici.value = response.map(k => ({
-          ...k,
-          je_supervizor: k.je_supervizor === 1,
-        }));
+        const { page, rowsPerPage } = pagination.value;
+        const response = await KorisniciService.getAllKorisnici(page, rowsPerPage);
+        console.log("RESULT FROM BACKEND:", response);
+        korisnici.value = (response.data || []).map(k => ({
+  ...k,
+  je_supervizor: k.je_supervizor === 1
+}));
+        pagination.value.rowsNumber = Number(response.total) || 0;
+    pagination.value.totalPages = Number(response.totalPages) || 0;
       } catch (error) {
         $q.notify({
           type: 'negative',
@@ -177,10 +180,6 @@ export default defineComponent({
         loading.value = false;
       }
     };
-
-    /**
-     * Ažurira status 'je_supervizor' u bazi
-     */
     const toggleSupervizorStatus = async (korisnik) => {
       // Prevencija promjene vlastitog statusa
       if (korisnik.id === myUserId.value) {
@@ -192,10 +191,10 @@ export default defineComponent({
           return;
       }
 
-      const newStatus = korisnik.je_supervizor; // status je već promijenjen u v-modelu
+      const newStatus = korisnik.je_supervizor; 
       
       try {
-        // ✅ Korištenje servisne funkcije
+        
         await KorisniciService.updateKorisnikSupervizorStatus(korisnik.id, newStatus);
         
         $q.notify({
@@ -208,18 +207,16 @@ export default defineComponent({
           message: 'Greška pri ažuriranju statusa.',
           caption: error.response?.data?.error || 'Došlo je do greške na serveru.'
         });
-        // U slučaju greške, vratiti status na prethodnu vrijednost u UI
+        
         korisnik.je_supervizor = !newStatus; 
       }
     };
 
-    /**
-     * Kreira novog korisnika
-     */
+ 
     const createNewKorisnik = async () => {
       isSaving.value = true;
       try {
-        // ✅ Korištenje servisne funkcije
+        
         const response = await KorisniciService.createKorisnik(newKorisnik.value);
         
         $q.notify({
@@ -227,11 +224,11 @@ export default defineComponent({
           type: 'positive',
         });
         
-        // Ažuriraj listu i zatvori modal
+       
         await fetchKorisnici(); 
         showCreateDialog.value = false;
 
-        // Resetiraj formu
+       
         newKorisnik.value = {
           ime: '',
           prezime: '',
@@ -251,8 +248,15 @@ export default defineComponent({
       }
     };
 
-    // Dohvati podatke kada se komponenta učita
+    
     onMounted(fetchKorisnici);
+
+    const onRequest = (props) => {
+  if (props && props.pagination) {
+    Object.assign(pagination.value, props.pagination);
+  }
+  fetchKorisnici();
+};
 
     return {
       korisnici,
@@ -263,6 +267,8 @@ export default defineComponent({
       newKorisnik,
       isSaving,
       myUserId,
+      pagination,
+      onRequest,
       toggleSupervizorStatus,
       createNewKorisnik,
     };
@@ -271,5 +277,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Dodatni stilovi ako su potrebni */
+
 </style>

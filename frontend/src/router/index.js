@@ -21,11 +21,8 @@ export default defineRouter(function () {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
 
-  // -----------------------------------------
-  //            AUTH GUARD OVDJE
-  // -----------------------------------------
   Router.beforeEach((to, from, next) => {
-    // Ako ruta traži supervizora
+
     if (to.meta.requiresSupervisor) {
       if (!user.value || !user.value.je_supervizor) {
         return next('/home')
@@ -34,7 +31,6 @@ export default defineRouter(function () {
 
     next()
   })
-  // -----------------------------------------
 
   return Router
 })
