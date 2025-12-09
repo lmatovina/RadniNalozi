@@ -9,7 +9,6 @@ const router = Router();
 
 router.use("/nalozi", naloziRoutes);
 router.use("/auth", authRoutes);
-
 router.use("/korisnici", korisniciRoute);
 router.use("/uloge", ulogeRoute);
 /*

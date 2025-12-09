@@ -17,7 +17,7 @@
           color="primary"
           label="Učitaj"
           class="full-width"
-          @click="loadNadolazeciNalozi"
+          @click="onRequest"
         />
       </div>
     </div>
@@ -26,9 +26,10 @@
       :rows="nalozi"
       :columns="columns"
       row-key="id"
-      flat
-      bordered
-      dense
+      v-model:pagination="pagination"
+      @request="onRequest"
+      flat bordered dense
+      bottom-slots
     >
       
       <template v-slot:body-cell-rok_zavrsetka="props">
@@ -50,14 +51,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { getNadolazeciNalozi } from "../../services/naloziService.js";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
 
 const nalozi = ref([]);
-const dani = ref(null);
+const dani = ref(30);
 
 const columns = [
   { name: "naziv", label: "Naziv", field: "naziv", sortable: true },
@@ -75,6 +76,11 @@ const statusColor = (status) => {
     default: return "blue";
   }
 };
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 2,
+  rowsNumber: 0
+});
 
 const loadNadolazeciNalozi = async () => {
   try {
@@ -87,8 +93,9 @@ const loadNadolazeciNalozi = async () => {
     }
 
     nalozi.value = [];  
-
-    const result = await getNadolazeciNalozi(dani.value);
+    const { page, rowsPerPage } = pagination.value;
+    const result = await getNadolazeciNalozi(dani.value, page, rowsPerPage);
+    console.log("RESULT FROM BACKEND:", result);
     if (result.length === 0) {
       $q.notify({
         type: "info",
@@ -96,8 +103,11 @@ const loadNadolazeciNalozi = async () => {
       });
     }
 
-    nalozi.value = result;
-  } catch (err) {
+    nalozi.value = result.data || [];
+    console.log("RESULT FROM BACKEND:", nalozi.value);
+    pagination.value.rowsNumber = Number(result.total) || 0;
+    pagination.value.totalPages = Number(result.totalPages) || 0;
+  pagination.value = { ...pagination.value };  } catch (err) {
     if (err.response && err.response.status === 404) {
       nalozi.value = [];
       $q.notify({
@@ -113,4 +123,14 @@ const loadNadolazeciNalozi = async () => {
     }
   }
 };
+
+const onRequest = (props) => {
+  if (props && props.pagination) {
+    Object.assign(pagination.value, props.pagination);
+  }
+  loadNadolazeciNalozi();
+};
+
+onMounted(loadNadolazeciNalozi);
+
 </script>
