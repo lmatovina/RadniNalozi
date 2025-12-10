@@ -17,6 +17,39 @@ export const getAllKorisnici = async (req, res) => {
   }
 };
 
+export const searchKorisnici = async (req, res) => {
+    try {
+        const { q } = req.query;
+        
+        console.log("🔍 Pretraga korisnika za termin:", q);
+        
+        if (!q || q.length < 2) {
+            return res.json([]); // Vraća prazan array umjesto greške
+        }
+        
+        const korisnici = await korisnikService.searchKorisnici(q);
+        res.json(korisnici);
+    } catch (error) {
+        console.error("Greška pri pretrazi korisnika:", error);
+        res.status(500).json({ error: "Interna greška servera" });
+    }
+};
+
+/**
+ * Dohvaća listu korisnika s opcionalnim filtrom pretrage.
+ * Pristupa se preko GET /api/korisnici?search=termin
+ */
+/*export const getFilteredKorisnici = async (req, res) => {
+    try {
+        const { search } = req.query; // Dohvaćanje search parametra
+        const korisnici = await korisnikService.searchKorisnici(search);
+        res.json(korisnici);
+    } catch (error) {
+        console.error("Greška pri dohvaćanju filtriranih korisnika:", error);
+        res.status(500).json({ error: "Interna greška servera" });
+    }
+};*/
+
 export const updateSupervizorStatus = async (req, res) => {
   const { id } = req.params;
   const { je_supervizor } = req.body;
@@ -75,3 +108,6 @@ export const createKorisnik = async (req, res) => {
     res.status(500).json({ error: "Interna greška servera." });
   }
 };
+
+
+

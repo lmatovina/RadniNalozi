@@ -6,6 +6,7 @@ import axios from 'axios'
 const API_URL = 'http://localhost:3000/api/korisnici'
 
 
+
 const getAuthHeader = () => {
   // Pretpostavlja se da se token zove 'token' u localStorage-u
   const token = localStorage.getItem('token') 
@@ -48,3 +49,21 @@ export const updateKorisnikSupervizorStatus = async (id, je_supervizor) => {
   )
   return res.data
 }
+
+/**
+ * Pretražuje korisnike po imenu, prezimenu ili emailu
+ * @param {string} searchTerm - Termin za pretragu (min 2 znaka)
+ */
+export const searchKorisnici = async (searchTerm) => {
+    try {
+        const headers = getAuthHeader();
+        const response = await axios.get(`${API_URL}/search`, {
+            headers,
+            params: { q: searchTerm }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Greška pri pretrazi korisnika:", error);
+        return [];
+    }
+};

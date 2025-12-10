@@ -66,3 +66,76 @@ export const getAllUloge = async () => {
     const [uloge] = await db.query("SELECT * FROM Uloga ORDER BY naziv");
     return uloge;
 };
+
+/**
+ * Uklanja korisnika iz određene uloge (Briše red iz KorisnikUloga).
+ */
+export const removeMemberFromUloga = async (ulogaId, korisnikId) => {
+    const [result] = await db.query(
+        "DELETE FROM KorisnikUloga WHERE uloga_id = ? AND korisnik_id = ?",
+        [ulogaId, korisnikId]
+    );
+    // Vraća true ako je promijenjen barem jedan red
+    return result.affectedRows > 0; 
+};
+
+
+/**
+ * Dohvaća detalje korisnika koji su članovi određene uloge.
+ * @param {number} ulogaId - ID uloge.
+ * @returns {Array} Lista objekata Korisnika.
+ */
+export const getMembersByUlogaId = async (ulogaId) => {
+    // SELECT: Dohvaćamo id, ime, prezime i email iz tablice Korisnik
+    // JOIN: Spajamo s KorisnikUloga gdje je uloga_id = :ulogaId
+    const query = `
+        SELECT 
+            K.id, 
+            K.ime, 
+            K.prezime, 
+            K.email 
+        FROM Korisnik K
+        JOIN KorisnikUloga KU ON K.id = KU.korisnik_id
+        WHERE KU.uloga_id = ?
+        ORDER BY K.prezime, K.ime`;
+    
+    const [members] = await db.query(query, [ulogaId]);
+    return members;
+};
+
+
+
+export const deleteUloga = async (ulogaId) => {
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        // 1. Prvo obrišite sve članove iz uloge (iz spojne tablice)
+        await connection.query(
+            "DELETE FROM KorisnikUloga WHERE uloga_id = ?",
+            [ulogaId]
+        );
+
+        // 2. Zatim obrišite samu ulogu
+        const [result] = await connection.query(
+            "DELETE FROM Uloga WHERE id = ?",
+            [ulogaId]
+        );
+
+        await connection.commit();
+
+        // Vraća true ako je obrisan barem jedan red
+        return result.affectedRows > 0;
+
+    } catch (error) {
+        if (connection) {
+            await connection.rollback();
+        }
+        throw error;
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+};

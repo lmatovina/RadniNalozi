@@ -39,17 +39,10 @@
   </div>
 
   <div class="col-12 col-md-3">
-<<<<<<< HEAD
         <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('uloge-manager')">
           <div class="text-subtitle1">Upravljanje ulogama (timovi)</div>
         </q-card>
     </div>
-=======
-    <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('novi')">
-      <div class="text-subtitle1">Kreiranje novih naloga</div>
-    </q-card>
-  </div>
->>>>>>> 21b0f2ceed9980340d431ced803e6c0fc5653f04
 
 </div>
 
@@ -70,7 +63,7 @@
         </div>
 
         <div class="col-12 col-md-4">
-          <q-btn
+          <q-btnq
             color="primary"
             class="full-width"
             label="Dodaj naloge za godinu"

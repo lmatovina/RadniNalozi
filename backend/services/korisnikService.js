@@ -2,6 +2,29 @@
 import { db } from "../config/db.js";
 
 /**
+ * Dohvaća korisnike filtrirane po imenu/prezimenu/emailu.
+ * @param {string} searchQuery - Tekst za pretragu.
+ * @returns {Array} Lista korisnika.
+ */
+export const searchKorisnici = async (searchQuery) => {
+    let query = "SELECT id, ime, prezime, email FROM Korisnik";
+    let params = [];
+
+    if (searchQuery && searchQuery.length >= 2) {
+        // Pretraga po imenu ILI prezimenu ILI emailu
+        const searchPattern = `%${searchQuery}%`;
+        query += " WHERE ime LIKE ? OR prezime LIKE ? OR email LIKE ?";
+        params.push(searchPattern, searchPattern, searchPattern);
+    }
+    
+    // Sortiranje da bi rezultati bili konzistentni
+    query += " ORDER BY prezime, ime LIMIT 50"; 
+
+    const [korisnici] = await db.query(query, params);
+    return korisnici;
+};
+
+/**
  * Dohvaća sve korisnike s odabranim atributima.
  * Uklanjamo 'lozinka_hash' iz sigurnosnih razloga.
  */
