@@ -7,6 +7,8 @@ import { authenticateJWT } from "../middlewares/authMiddleware.js";
 
 import supervisorMiddleware from "../middlewares/supervisorMiddleware.js";
 
+ import * as nalogController from "../controllers/nalogController.js";
+
 const router = Router();
 
 // POST /api/uloge: Kreiranje nove uloge (Autentikacija + Autorizacija Supervizor)
@@ -41,5 +43,7 @@ router.delete("/:id",
     supervisorMiddleware, 
     ulogaController.deleteUloga
 );
+
+router.get('/naziviUloga', authenticateJWT, nalogController.getUloge) 
 
 export default router;

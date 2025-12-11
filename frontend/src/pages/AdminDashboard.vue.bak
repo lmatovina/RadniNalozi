@@ -31,11 +31,6 @@
       <div class="text-subtitle1">Notifikacije poslane ovaj tjedan</div>
     </q-card>
   </div>
-  <div class="col-12 col-md-3">
-    <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('novi')">
-      <div class="text-subtitle1">Kreiranje novih naloga</div>
-    </q-card>
-  </div>
 
     <div class="col-12 col-md-3">
     <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('admin-list')">
@@ -127,12 +122,8 @@ function go(section) {
     router.push('/admin/uloge-manager')
     return
   }
-  if (section === 'novi') {
-    router.push('/nalozi/novi')
-    return
-  }
 
-  //router.push(/nalozi/${section})
+  router.push(`/nalozi/${section}`)
 }
 
 </script>   
