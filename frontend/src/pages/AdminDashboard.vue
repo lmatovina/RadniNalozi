@@ -131,6 +131,18 @@ function go(section) {
     router.push('/nalozi/novi')
     return
   }
+  if (section === 'ove-godine') {
+    router.push('/nalozi/ove-godine')
+    return
+  }
+  if (section === 'nadolazeci') {
+    router.push('/nalozi/nadolazeci')
+    return
+  }
+  if (section === 'kasni') {
+    router.push('/nalozi/kasni')
+    return
+  }
 
   //router.push(/nalozi/${section})
 }
