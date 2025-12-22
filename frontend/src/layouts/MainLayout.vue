@@ -39,6 +39,13 @@
           <q-item-section>Notifikacije</q-item-section>
         </q-item>
 
+        <q-item @click="logout" clickable v-ripple to="/">
+          <q-item-section avatar>
+            <q-icon name="logout" color="red" />
+          </q-item-section>
+          <q-item-section>Log Out</q-item-section>
+        </q-item>
+
       </q-list>
     </q-drawer>
 
@@ -50,7 +57,15 @@
 
 <script setup>
 import {  computed} from 'vue'
-import { user } from '../stores/userStore'
+import { user, clearUser } from '../stores/userStore'
+
+const logout = async () => {
+  try{
+    await clearUser();
+  } catch(err){
+    console.error(err);
+  }
+};
 
 
 

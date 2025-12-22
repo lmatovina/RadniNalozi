@@ -6,7 +6,7 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
-import { user } from '../stores/userStore.js'   // <-- OVDJE
+import { user } from '../stores/userStore.js' 
 
 export default defineRouter(function () {
   const createHistory = process.env.SERVER

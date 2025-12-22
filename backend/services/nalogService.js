@@ -10,12 +10,84 @@ export const getAllNalozi = async () => {
 };
 
 
-export const getNalogById = async (id) => {
+export const getNalogById = async (id, page, limit) => {
+
+  page = Number(page) || 1;
+  limit = Number(limit) || 10;
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit; 
   const [rows] = await db.query(
-    `SELECT * FROM Nalog WHERE id = ?`,
+    `SELECT * FROM Nalog WHERE id = ? LIMIT ? OFFSET ?`,
+    [id, limit, startIndex]
+  );
+  const [[{ total }]] = await db.query(
+    `SELECT COUNT(*) AS total FROM Nalog WHERE id = ?`,
     [id]
   );
-  return rows[0] || null;
+  return {
+    data: rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  } || null;
+};
+
+export const updateZatvoriNalog = async (nalog_id, korisnik_id) => {
+  const [result] = await db.query(
+    `
+    UPDATE KorisnikNalog
+    SET zatvoren = 1, datum_zatvaranja = NOW()
+    WHERE nalog_id = ? AND korisnik_id = ?
+    `,
+    [nalog_id, korisnik_id]
+  );
+  return result.affectedRows > 0;
+};
+
+export const getKorisnikNalogById = async (id, page, limit) => {
+
+  page = Number(page) || 1;
+  limit = Number(limit) || 10;
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit; 
+  const [rows] = await db.query(
+  `
+  SELECT
+    n.id,
+    n.naziv,
+    n.rok_zavrsetka,
+    n.status,
+    n.sadrzaj,
+    kn.zatvoren,
+    kn.datum_zatvaranja
+  FROM KorisnikNalog kn
+  JOIN Nalog n ON n.id = kn.nalog_id
+  WHERE kn.korisnik_id = ?
+  ORDER BY n.rok_zavrsetka ASC
+  LIMIT ? OFFSET ?
+  `,
+  [id, limit, startIndex]
+);
+
+   const [[{ total }]] = await db.query(
+  `
+  SELECT COUNT(*) AS total
+  FROM KorisnikNalog kn
+  JOIN Nalog n ON n.id = kn.nalog_id
+  WHERE kn.korisnik_id = ?
+  `,
+  [id]
+);
+  return {
+    data: rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
 export const getNaloziByYear = async (page, limit) => {

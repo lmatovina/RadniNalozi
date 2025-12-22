@@ -35,11 +35,27 @@ export const getNadolazeciNalozi = async (days, page, limit) => {
   return res.data
 }
 
-export const getNalogById = async (id) => {
-  const res = await axios.get(`${API_URL}/${id}`, { headers: getAuthHeader() })
+export const getNalogById = async (id, page, limit) => {
+  const res = await axios.get(`${API_URL}/${id}&page=${page}&limit=${limit}`, { headers: getAuthHeader() })
   return res.data
 }
 
+export const getKorisnikNalogById = async (id, page, limit) => {
+  const res = await axios.get(
+    `${API_URL}/korisnici/${id}?page=${page}&limit=${limit}`,
+    { headers: getAuthHeader() }
+  );
+  return res.data;
+};
+
+export const updateZatvoriNalog = async (nalog_id) => {
+  const res = await axios.patch(
+    `${API_URL}/zatvori/${nalog_id}`,
+    {},
+    { headers: getAuthHeader() }
+  );
+  return res.data;
+};
 
 export const createNalog = async (nalog) => {
   const res = await axios.post(`${API_URL}/novi`, nalog, { headers: getAuthHeader() })

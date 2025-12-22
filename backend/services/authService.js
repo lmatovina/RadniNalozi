@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "super-ultra-tajni-jwt-kljuc-123456
 
 export const loginUser = async (email, password) => {
   try {
-    // ispravna tablica i kolona lozinke
+  
     const [rows] = await db.query(
       "SELECT * FROM Korisnik WHERE email = ?",
       [email]

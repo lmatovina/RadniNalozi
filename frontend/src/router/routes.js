@@ -36,10 +36,9 @@ const routes = [
     ]
   },
 
-  // NOVA RUTA
 {
   path: '/admin', 
-  component: () => import('layouts/MainLayout.vue'), // Koristi isti layout
+  component: () => import('layouts/MainLayout.vue'), 
   children: [
     
     { 

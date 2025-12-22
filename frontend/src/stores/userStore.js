@@ -10,4 +10,5 @@ export const setUser = (newUser) => {
 export const clearUser = () => {
   user.value = null
   localStorage.removeItem('user')
+  localStorage.removeItem('token')
 }
