@@ -49,13 +49,28 @@
         outlined
         class="q-mb-sm"
       />
-      <q-input
-        v-model="form.rok_zavrsetka"
-        label="Rok završetka (YYYY-MM-DD)"
-        dense
-        outlined
-        class="q-mb-sm"
-      />
+    <q-input
+  v-model="form.rok_zavrsetka"
+  label="Rok završetka"
+  dense
+  outlined
+  class="q-mb-sm"
+  mask="date"
+>
+  <template v-slot:append>
+    <q-icon name="event" class="cursor-pointer">
+      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+        <q-date
+          v-model="form.rok_zavrsetka"
+          mask="YYYY-MM-DD"
+          :options="dateOptions"
+          title="Rok Završetka"
+          subtitle="Odaberi datum"
+        />
+      </q-popup-proxy>
+    </q-icon>
+  </template>
+</q-input>
       <div class="q-gutter-sm q-mt-sm">
         <q-btn type="submit" color="primary" :label="editId ? 'Spremi izmjene' : 'Kreiraj nalog'" />
         <q-btn v-if="editId" flat color="negative" label="Obriši nalog" @click="obrisiNalog" />
@@ -67,6 +82,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { date } from 'quasar'
+
 import {
   getAllNalozi,
   createNalog,
@@ -89,6 +106,8 @@ const form = ref({
   sadrzaj: '',
   rok_zavrsetka: ''
 })
+const todayStr = date.formatDate(new Date(), 'YYYY/MM/DD')
+const dateOptions = d => d >= todayStr
 
 const columns = [
   { name: 'id', label: 'ID', field: 'id', align: 'left' },
