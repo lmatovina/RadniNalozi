@@ -25,6 +25,11 @@
       <div class="text-subtitle1">Nalozi s kašnjenjem</div>
     </q-card>
   </div>
+  <div class="col-12 col-md-3">
+    <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('zavrseni-kasno')">
+      <div class="text-subtitle1">Nalozi završeni kasno</div>
+    </q-card>
+  </div>
 
   <div class="col-12 col-md-3">
     <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('notifikacije-tjedan')">
@@ -141,6 +146,10 @@ function go(section) {
   }
   if (section === 'kasni') {
     router.push('/nalozi/kasni')
+    return
+  }
+  if (section === 'zavrseni-kasno') {
+    router.push('/nalozi/zavrseni-kasni')
     return
   }
 

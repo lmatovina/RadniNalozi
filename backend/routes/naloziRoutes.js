@@ -5,6 +5,8 @@ import { authenticateJWT } from "../middlewares/authMiddleware.js"
 const router = Router();
 
 router.get("/godina", authenticateJWT, nalogController.getNaloziByYear);
+router.get("/kasni", authenticateJWT, nalogController.getKasniNalozi);
+router.get("/zavrseni-kasni", authenticateJWT, nalogController.getZavrseniKasnjenje);
 router.get("/nadolazeci", authenticateJWT, nalogController.getNadolazeciNalozi);
 router.get("/naziviUloga", authenticateJWT, nalogController.getUloge);
 router.get("/korisnici/:korisnikId", authenticateJWT, nalogController.getKorisnikNalogById);

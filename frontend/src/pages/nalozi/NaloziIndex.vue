@@ -34,6 +34,7 @@
             color="red"
             label="Zatvori"
             flat
+            :disable="props.row.status === 'Zatvoren'"
             @click="confirmZatvori(props.row.id)"
           />
         </q-td>

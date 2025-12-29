@@ -118,7 +118,7 @@ export const getUloge = async (req, res) => {
 
 export const updateZatvoriNalog = async (req, res) => {
   try {
-      console.log("REQ.USER:", req.user); // treba prikazati { id: ..., je_supervizor: ... }
+      console.log("REQ.USER:", req.user);
   console.log("PARAMS ID:", req.params.id);
     const { id } = req.params; 
     const korisnik_id = req.user.id; 
@@ -131,6 +131,35 @@ export const updateZatvoriNalog = async (req, res) => {
     }
 
     res.json({ message: "Nalog zatvoren" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Greška na serveru" });
+  }
+};
+
+export const getKasniNalozi = async (req, res) => {
+  try {
+    console.log("Query params:", req.query);
+    const page = parseInt(req.query.page, 10) || 1;      
+    const limit = parseInt(req.query.limit, 10) || 10; 
+
+    const nalozi = await nalogService.getKasniNalozi(page, limit);
+
+    res.json(nalozi);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Greška na serveru" });
+  }
+};
+
+export const getZavrseniKasnjenje = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+
+    const nalozi = await nalogService.getZavrseniKasnjenje(page, limit);
+
+    res.json(nalozi);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Greška na serveru" });

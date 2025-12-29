@@ -38,7 +38,7 @@ export const updateZatvoriNalog = async (nalog_id, korisnik_id) => {
   const [result] = await db.query(
     `
     UPDATE KorisnikNalog
-    SET zatvoren = 1, datum_zatvaranja = NOW()
+    SET zatvoren = 1, datum_zatvaranja = NOW(), status = 'Zatvoren' 
     WHERE nalog_id = ? AND korisnik_id = ?
     `,
     [nalog_id, korisnik_id]
@@ -59,8 +59,8 @@ export const getKorisnikNalogById = async (id, page, limit) => {
     n.id,
     n.naziv,
     n.rok_zavrsetka,
-    n.status,
     n.sadrzaj,
+    kn.status,
     kn.zatvoren,
     kn.datum_zatvaranja
   FROM KorisnikNalog kn
@@ -90,7 +90,7 @@ export const getKorisnikNalogById = async (id, page, limit) => {
   };
 };
 
-export const getNaloziByYear = async (page, limit) => {
+/*export const getNaloziByYear = async (page, limit) => {
   const now = new Date();
   const godina_oznaka = getAcademicYearStart(now);
   page = Number(page) || 1;
@@ -113,7 +113,61 @@ export const getNaloziByYear = async (page, limit) => {
     total,
     totalPages: Math.ceil(total / limit),
   };
+};*/
+
+export const getNaloziByYear = async (page, limit) => {
+  const now = new Date();
+  const godina_oznaka = getAcademicYearStart(now);
+
+  page = Number(page) || 1;
+  limit = Number(limit) || 10;
+
+  const offset = (page - 1) * limit;
+
+  const [rows] = await db.query(
+    `
+    SELECT
+  n.id AS nalog_id,
+  n.naziv,
+  n.rok_zavrsetka,
+  n.sadrzaj,
+  n.godina_oznaka,
+
+  kn.korisnik_id,
+  kn.status,
+  kn.zatvoren,
+  kn.datum_zatvaranja,
+
+  k.email
+  FROM KorisnikNalog kn
+  JOIN Nalog n ON n.id = kn.nalog_id
+  JOIN Korisnik k ON k.id = kn.korisnik_id
+  WHERE n.godina_oznaka = ?
+  ORDER BY n.rok_zavrsetka ASC
+  LIMIT ? OFFSET ?
+    `,
+    [godina_oznaka, limit, offset]
+  );
+
+  const [[{ total }]] = await db.query(
+    `
+    SELECT COUNT(*) AS total
+    FROM KorisnikNalog kn
+    JOIN Nalog n ON n.id = kn.nalog_id
+    WHERE n.godina_oznaka = ?
+    `,
+    [godina_oznaka]
+  );
+
+  return {
+    data: rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
 };
+
 
 export const getNadolazeciNalozi = async (dani, page, limit) => {
 
@@ -248,3 +302,106 @@ export const getAllUloge = async () => {
   `)
   return rows
 }
+
+export const getKasniNalozi = async (page, limit) => {
+  const now = new Date();
+  const godina_oznaka = getAcademicYearStart(now);
+
+  page = Number(page) || 1;
+  limit = Number(limit) || 10;
+  const offset = (page - 1) * limit;
+
+  const [rows] = await db.query(
+    `
+    SELECT
+      n.id AS nalog_id,
+      n.naziv,
+      n.rok_zavrsetka,
+      n.sadrzaj,
+      n.godina_oznaka,
+      kn.korisnik_id,
+      kn.status,
+      kn.zatvoren,
+      kn.datum_zatvaranja,
+      k.email
+    FROM KorisnikNalog kn
+    JOIN Nalog n ON n.id = kn.nalog_id
+    JOIN Korisnik k ON k.id = kn.korisnik_id
+    WHERE n.godina_oznaka = ?
+      AND kn.status = 'Otvoren'
+      AND n.rok_zavrsetka < NOW()
+    ORDER BY n.rok_zavrsetka ASC
+    LIMIT ? OFFSET ?
+    `,
+    [godina_oznaka, limit, offset]
+  );
+
+  const [[{ total }]] = await db.query(
+    `
+    SELECT COUNT(*) AS total
+    FROM KorisnikNalog kn
+    JOIN Nalog n ON n.id = kn.nalog_id
+    WHERE n.godina_oznaka = ?
+      AND kn.status = 'Aktivan'
+      AND n.rok_zavrsetka < NOW()
+    `,
+    [godina_oznaka]
+  );
+
+  return {
+    data: rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
+};
+
+export const getZavrseniKasnjenje = async (page = 1, limit = 10) => {
+  page = Number(page) || 1;
+  limit = Number(limit) || 10;
+
+  const offset = (page - 1) * limit;
+
+  const [rows] = await db.query(
+    `
+    SELECT
+      n.id AS nalog_id,
+      n.naziv,
+      n.rok_zavrsetka,
+      n.sadrzaj,
+      kn.korisnik_id,
+      kn.status,
+      kn.zatvoren,
+      kn.datum_zatvaranja,
+      k.email
+    FROM KorisnikNalog kn
+    JOIN Nalog n ON n.id = kn.nalog_id
+    JOIN Korisnik k ON k.id = kn.korisnik_id
+    WHERE kn.datum_zatvaranja IS NOT NULL
+      AND DATE(kn.datum_zatvaranja) > n.rok_zavrsetka
+    ORDER BY kn.datum_zatvaranja DESC
+    LIMIT ? OFFSET ?
+    `,
+    [limit, offset]
+  );
+
+  const [[{ total }]] = await db.query(
+    `
+    SELECT COUNT(*) AS total
+    FROM KorisnikNalog kn
+    JOIN Nalog n ON n.id = kn.nalog_id
+    WHERE kn.datum_zatvaranja IS NOT NULL
+      AND DATE(kn.datum_zatvaranja) > n.rok_zavrsetka
+    `,
+  );
+
+  return {
+    data: rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
+};
+

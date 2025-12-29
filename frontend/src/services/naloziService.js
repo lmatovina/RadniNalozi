@@ -29,6 +29,15 @@ export const getNaloziByYear = async (page, limit) => {
   const res = await axios.get(`${API_URL}/godina?page=${page}&limit=${limit}`, { headers: getAuthHeader() })
   return res.data
 }
+export const getKasniNalozi = async (page, limit) => {
+  const res = await axios.get(`${API_URL}/kasni?page=${page}&limit=${limit}`, { headers: getAuthHeader() })
+  return res.data
+}
+
+export const getZavrseniKasnjenje = async (page, limit) => {
+  const res = await axios.get(`${API_URL}/zavrseni-kasni?page=${page}&limit=${limit}`, { headers: getAuthHeader() });
+  return res.data;
+};
 
 export const getNadolazeciNalozi = async (days, page, limit) => {
   const res = await axios.get(`${API_URL}/nadolazeci?dani=${days}&page=${page}&limit=${limit}`, { headers: getAuthHeader() })

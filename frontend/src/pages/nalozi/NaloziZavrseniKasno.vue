@@ -30,13 +30,14 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getNaloziByYear } from "../../services/naloziService.js";
+import { getZavrseniKasnjenje } from "../../services/naloziService.js";
 
 const columns = [
   { name: "naziv", label: "Naziv", field: "naziv", sortable: true },
   { name: "rok_zavrsetka", label: "Rok", field: "rok_zavrsetka", sortable: true },
   { name: "status", label: "Status", field: "status", sortable: true },
   { name: "email", label: "Email", field: "email", sortable: true },
+  { name: "datum_zatvaranja", label: "Datum zatvaranja", field: "datum_zatvaranja", sortable: true },
 ];
 
 const nalozi = ref([]);
@@ -61,7 +62,7 @@ const loadNalozi = async () => {
   try {
     const { page, rowsPerPage } = pagination.value;
 
-    const result = await getNaloziByYear(page, rowsPerPage);
+    const result = await getZavrseniKasnjenje(page, rowsPerPage);
     console.log("RESULT FROM BACKEND:", result);
 
     nalozi.value = result.data || [];

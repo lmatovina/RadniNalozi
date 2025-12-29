@@ -31,6 +31,7 @@ const routes = [
       { path: 'ove-godine', component: () => import('pages/nalozi/NaloziOveGodine.vue') },
       { path: 'nadolazeci', component: () => import('pages/nalozi/NaloziNadolazeci.vue') },
       { path: 'kasni', component: () => import('pages/nalozi/NaloziKasne.vue') },
+      { path: 'zavrseni-kasni', component: () => import('pages/nalozi/NaloziZavrseniKasno.vue') },
       { path: 'novi', component: () => import('pages/nalozi/NaloziCrud.vue') }
       
     ]
