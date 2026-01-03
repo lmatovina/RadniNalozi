@@ -1,4 +1,5 @@
 import * as nalogService from "../services/nalogService.js";
+import ExcelJS from "exceljs";
 
 export const getAllNalozi = async (req, res) => {
   try {
@@ -163,5 +164,78 @@ export const getZavrseniKasnjenje = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Greška na serveru" });
+  }
+};
+
+export const exportZavrseniKasniExcel = async (req, res) => {
+  const data = await nalogService.getZavrseniKasniZaExport();
+
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Završeni s kašnjenjem");
+
+  sheet.columns = [
+    { header: "Naziv", key: "naziv", width: 30 },
+    { header: "Email", key: "email", width: 30 },
+    { header: "Rok završetka", key: "rok_zavrsetka", width: 15 },
+    { header: "Datum zatvaranja", key: "datum_zatvaranja", width: 20 },
+    { header: "Status", key: "status", width: 15 },
+  ];
+
+  sheet.addRows(data);
+
+  res.setHeader(
+    "Content-Disposition",
+    "attachment; filename=zavrseni_kasni.xlsx"
+  );
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
+
+  await workbook.xlsx.write(res);
+  res.end();
+};
+
+export const exportKasniNaloziExcel = async (req, res) => {
+  try {
+    const data = await nalogService.getKasniNaloziZaExport();
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Kasni nalozi");
+
+    worksheet.columns = [
+      { header: "Nalog ID", key: "nalog_id", width: 10 },
+      { header: "Naziv", key: "naziv", width: 25 },
+      { header: "Rok završetka", key: "rok_zavrsetka", width: 15 },
+      { header: "Status", key: "status", width: 12 },
+      { header: "Email korisnika", key: "email", width: 30 },
+      { header: "Sadržaj", key: "sadrzaj", width: 40 },
+    ];
+
+    data.forEach(row => {
+      worksheet.addRow({
+        nalog_id: row.nalog_id,
+        naziv: row.naziv,
+        rok_zavrsetka: row.rok_zavrsetka,
+        status: row.status,
+        email: row.email,
+        sadrzaj: row.sadrzaj
+      });
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=kasni_nalozi.xlsx"
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Greška pri exportu kasnih naloga" });
   }
 };

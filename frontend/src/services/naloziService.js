@@ -86,4 +86,29 @@ export const arhivirajNalog = async (id) => {
   return res.data
 }
 
+export const exportZavrseniKasniExcel = async () => {
+  const res = await axios.get(
+    `${API_URL}/export/zavrseni-kasni`,
+    {
+      headers: getAuthHeader(),
+      responseType: "blob"
+    }
+  );
+
+  return res.data;
+};
+
+export const exportKasniExcel = async () => {
+  const res = await axios.get(
+    `${API_URL}/export/kasni`,
+    {
+      headers: getAuthHeader(),
+      responseType: "blob"
+    }
+  );
+
+  return res.data;
+};
+
+
 

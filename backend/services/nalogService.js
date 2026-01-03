@@ -405,3 +405,55 @@ export const getZavrseniKasnjenje = async (page = 1, limit = 10) => {
   };
 };
 
+export const getZavrseniKasniZaExport = async () => {
+  const [rows] = await db.query(`
+    SELECT
+      n.naziv,
+      n.rok_zavrsetka,
+      kn.datum_zatvaranja,
+      kn.status,
+      k.email
+    FROM KorisnikNalog kn
+    JOIN Nalog n ON n.id = kn.nalog_id
+    JOIN Korisnik k ON k.id = kn.korisnik_id
+    WHERE kn.datum_zatvaranja IS NOT NULL
+      AND DATE(kn.datum_zatvaranja) > n.rok_zavrsetka
+    ORDER BY kn.datum_zatvaranja DESC
+  `);
+
+  return rows;
+};
+
+export const getKasniNaloziZaExport = async () => {
+  const now = new Date();
+  const godina_oznaka = getAcademicYearStart(now);
+
+  const [rows] = await db.query(
+    `
+    SELECT
+      n.id AS nalog_id,
+      n.naziv,
+      n.rok_zavrsetka,
+      n.sadrzaj,
+      n.godina_oznaka,
+
+      kn.korisnik_id,
+      kn.status,
+      kn.zatvoren,
+      kn.datum_zatvaranja,
+
+      k.email
+    FROM KorisnikNalog kn
+    JOIN Nalog n ON n.id = kn.nalog_id
+    JOIN Korisnik k ON k.id = kn.korisnik_id
+    WHERE n.godina_oznaka = ?
+      AND kn.status = 'Otvoren'
+      AND n.rok_zavrsetka < NOW()
+    ORDER BY n.rok_zavrsetka ASC
+    `,
+    [godina_oznaka]
+  );
+
+  return rows;
+};
+

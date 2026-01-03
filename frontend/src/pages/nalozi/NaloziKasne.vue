@@ -25,12 +25,19 @@
         </q-td>
       </template>
     </q-table>
+    <q-btn
+  label="Export u Excel"
+  color="primary"
+  icon="download"
+  @click="exportExcel"
+/>
   </q-page>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { getKasniNalozi } from "../../services/naloziService.js";
+import { exportKasniExcel } from "../../services/naloziService.js";
 
 const columns = [
   { name: "naziv", label: "Naziv", field: "naziv", sortable: true },
@@ -75,6 +82,27 @@ const loadNalozi = async () => {
   }
 };
 
+const exportExcel = async () => {
+  try {
+    const blob = await exportKasniExcel();
+
+    const url = window.URL.createObjectURL(
+      new Blob([blob], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      })
+    );
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "kasni_nalozi.xlsx");
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (err) {
+    console.error("Greška pri exportu:", err);
+  }
+};
 
 const onRequest = (props) => {
   if (props && props.pagination) {
