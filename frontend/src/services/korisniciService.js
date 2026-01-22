@@ -67,3 +67,13 @@ export const searchKorisnici = async (searchTerm) => {
         return [];
     }
 };
+
+export const changePassword = async (data) => {
+  const headers = getAuthHeader();
+  const res = await axios.put(
+    `${API_URL}/change-password`,
+    data,
+    { headers }
+  );
+  return res.data;
+};

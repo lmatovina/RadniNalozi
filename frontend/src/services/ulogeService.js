@@ -98,3 +98,18 @@ export const deleteUloga = async (ulogaId) => {
         throw error;
     }
 };
+
+export const addMembersToUloga = async (ulogaId, korisnikIds) => {
+    try {
+        const headers = getAuthHeader();
+        const response = await axios.post(
+            `${API_URL}/${ulogaId}/members`,
+            { korisnikIds },
+            { headers }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Greška pri dodavanju članova:", error);
+        throw error;
+    }
+};

@@ -233,7 +233,25 @@ export const createNalog = async (data) => {
     values
   );
   
-  return result.insertId;
+  const nalogId = result.insertId;
+
+  const [users] = await db.query(
+    `SELECT korisnik_id FROM KorisnikUloga WHERE uloga_id = ?`,
+    [uloga_id]
+  );
+
+  if (users.length > 0) {
+    const insertValues = users.map(u => [u.korisnik_id, nalogId, "Otvoren", 0, null]);
+
+    await db.query(
+      `INSERT INTO KorisnikNalog 
+        (korisnik_id, nalog_id, status, zatvoren, datum_zatvaranja)
+       VALUES ?`,
+      [insertValues]
+    );
+  }
+
+  return nalogId;
 };
 
 
@@ -245,9 +263,21 @@ export const updateNalog = async (id, data) => {
     naziv,
     sadrzaj,
     rok_zavrsetka,
-    godina_oznaka,
-    status, // opcionalno
+    status,
   } = data;
+
+  const now = new Date();
+  const godina_oznaka = getAcademicYearStart(now);
+
+ 
+  const [[oldNalog]] = await db.query(
+    `SELECT uloga_id FROM Nalog WHERE id = ?`,
+    [id]
+  );
+
+  if (!oldNalog) return false;
+
+  const oldUlogaId = oldNalog.uloga_id;
 
   const [result] = await db.query(
     `
@@ -274,8 +304,47 @@ export const updateNalog = async (id, data) => {
     ]
   );
 
-  return result.affectedRows > 0;
+
+  if (result.affectedRows === 0) return false;
+
+  // 3️Ako se promijenio uloga_id → UPDATE KorisnikNalog
+  if (uloga_id !== oldUlogaId) {
+    console.log("Uloga se promijenila — radim reinsert korisnika...");
+
+    // 3a) Dohvati korisnike s novom ulogom
+    const [users] = await db.query(
+      `SELECT korisnik_id FROM KorisnikUloga WHERE uloga_id = ?`,
+      [uloga_id]
+    );
+
+    // 3b) Izbriši stare zapise iz KorisnikNalog za ovaj nalog
+    await db.query(
+      `DELETE FROM KorisnikNalog WHERE nalog_id = ?`,
+      [id]
+    );
+
+    // 3c) Insertaj nove korisnike
+    if (users.length > 0) {
+      const insertValues = users.map(u => [
+        u.korisnik_id,
+        id,
+        "Otvoren",   
+        0,           
+        null         
+      ]);
+
+      await db.query(
+        `INSERT INTO KorisnikNalog 
+          (korisnik_id, nalog_id, status, zatvoren, datum_zatvaranja)
+         VALUES ?`,
+        [insertValues]
+      );
+    }
+  }
+
+  return true;
 };
+
 
 export const deleteNalog = async (id) => {
   const [result] = await db.query(
@@ -342,7 +411,7 @@ export const getKasniNalozi = async (page, limit) => {
     FROM KorisnikNalog kn
     JOIN Nalog n ON n.id = kn.nalog_id
     WHERE n.godina_oznaka = ?
-      AND kn.status = 'Aktivan'
+      AND kn.status = 'Otvoren'
       AND n.rok_zavrsetka < NOW()
     `,
     [godina_oznaka]

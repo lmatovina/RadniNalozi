@@ -17,6 +17,7 @@
       :columns="columns"
       row-key="id"
       v-model:pagination="pagination"
+      :rows-per-page-options="[5, 10, 20, 50]"
       @request="onRequest"
       :loading="loading"
       :filter="filter"

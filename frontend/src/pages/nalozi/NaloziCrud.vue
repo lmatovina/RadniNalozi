@@ -10,6 +10,7 @@
       row-key="id"
       flat
       bordered
+      :rows-per-page-options="[5, 10, 20, 50]"
       @row-click="rowKlik"
     />
 

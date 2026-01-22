@@ -77,3 +77,18 @@ export const createKorisnik = async (ime, prezime, email, lozinka_hash, je_super
   );
   return result.insertId;
 };
+
+export const getUserPasswordHash = async (userId) => {
+  const [[user]] = await db.query(
+    `SELECT lozinka_hash FROM Korisnik WHERE id = ?`,
+    [userId]
+  );
+  return user;
+};
+
+export const updateUserPassword = async (userId, newHash) => {
+  await db.query(
+    `UPDATE Korisnik SET lozinka_hash = ? WHERE id = ?`,
+    [newHash, userId]
+  );
+};

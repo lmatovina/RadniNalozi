@@ -239,3 +239,15 @@ export const exportKasniNaloziExcel = async (req, res) => {
     res.status(500).json({ error: "Greška pri exportu kasnih naloga" });
   }
 };
+
+export const updateNalog = async (req, res) => {
+  try {
+    const ok = await nalogService.updateNalog(req.params.id, req.body);
+    if (!ok) return res.status(404).json({ message: "Nalog nije pronađen" });
+
+    return res.json({ message: "Nalog uspješno ažuriran" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Greška servera" });
+  }
+};

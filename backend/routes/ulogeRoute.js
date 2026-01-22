@@ -18,6 +18,12 @@ router.post("/",
     ulogaController.createUloga
 );
 
+router.post(
+    "/:ulogaId/members",
+    authenticateJWT,
+    supervisorMiddleware,
+    ulogaController.addUsersToUloga
+);
 // GET /api/uloge: Dohvat svih uloga (Samo Autentikacija)
 router.get("/", 
     authenticateJWT, 

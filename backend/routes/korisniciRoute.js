@@ -38,6 +38,12 @@ router.patch("/:id/supervizor",
     korisnikController.updateSupervizorStatus
 );
 
+router.put(
+  "/change-password",
+  authenticateJWT,
+  korisnikController.changePassword
+);
+
 export default router;
 
 // routes/korisniciRoute.js

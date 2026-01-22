@@ -72,7 +72,8 @@ export const createNalog = async (nalog) => {
 }
 
 export const updateNalog = async (id, nalog) => {
-  const res = await axios.put(`${API_URL}/${id}`, nalog, { headers: getAuthHeader() })
+  console.log("SALJEM UPDATE ZA ID:", id, nalog);
+  const res = await axios.put(`${API_URL}/update/${id}`, nalog, { headers: getAuthHeader() })
   return res.data
 }
 

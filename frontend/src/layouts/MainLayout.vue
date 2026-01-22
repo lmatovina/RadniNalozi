@@ -37,6 +37,13 @@
             <q-icon name="notifications" />
           </q-item-section>
           <q-item-section>Notifikacije</q-item-section>
+        </q-item>¸
+
+        <q-item clickable v-ripple to="/profil">
+          <q-item-section avatar>
+            <q-icon name="person" />
+          </q-item-section>
+          <q-item-section>Profil</q-item-section>
         </q-item>
 
         <q-item @click="logout" clickable v-ripple to="/">

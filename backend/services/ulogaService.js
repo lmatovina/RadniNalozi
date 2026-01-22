@@ -139,3 +139,167 @@ export const deleteUloga = async (ulogaId) => {
         }
     }
 };
+
+export const addUsersToUloga = async (ulogaId, korisnikIds) => {
+    let connection;
+
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        
+        const [existing] = await connection.query(
+            "SELECT korisnik_id FROM KorisnikUloga WHERE uloga_id = ?",
+            [ulogaId]
+        );
+
+        const existingIds = existing.map(r => r.korisnik_id);
+
+       
+        const newUserIds = korisnikIds.filter(
+            id => !existingIds.includes(id)
+        );
+
+        if (newUserIds.length === 0) {
+            await connection.commit();
+            return { added: 0 };
+        }
+
+        
+        const values = newUserIds.map(userId => [userId, ulogaId]);
+
+        await connection.query(
+            "INSERT INTO KorisnikUloga (korisnik_id, uloga_id) VALUES ?",
+            [values]
+        );
+
+        await connection.commit();
+
+        return { added: newUserIds.length };
+
+    } catch (error) {
+        if (connection) {
+            await connection.rollback();
+        }
+        throw error;
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+};
+
+export const addUsersToUlogaAndAssignNaloge = async (ulogaId, korisnikIds) => {
+  let connection;
+
+  try {
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    // 1. Dohvati postojeće korisnike u ulozi
+    const [existingUsers] = await connection.query(
+      `SELECT korisnik_id FROM KorisnikUloga WHERE uloga_id = ?`,
+      [ulogaId]
+    );
+
+    const existingUserIds = existingUsers.map(u => u.korisnik_id);
+
+    // 2. Samo NOVI korisnici
+    const newUserIds = korisnikIds.filter(
+      id => !existingUserIds.includes(id)
+    );
+
+    if (newUserIds.length === 0) {
+      await connection.commit();
+      return { addedUsers: 0, assignedNalogs: 0 };
+    }
+
+    // 3. Insert u KorisnikUloga
+    const userRoleValues = newUserIds.map(uid => [uid, ulogaId]);
+
+    await connection.query(
+      `INSERT INTO KorisnikUloga (korisnik_id, uloga_id) VALUES ?`,
+      [userRoleValues]
+    );
+
+    // 4. Dohvati sve naloge te uloge
+    const [nalogs] = await connection.query(
+      `SELECT id FROM Nalog WHERE uloga_id = ?`,
+      [ulogaId]
+    );
+
+    if (nalogs.length > 0) {
+      const nalogAssignments = [];
+
+      for (const nalog of nalogs) {
+        for (const userId of newUserIds) {
+          nalogAssignments.push([
+            userId,
+            nalog.id,
+            "Otvoren",
+            0,
+            null
+          ]);
+        }
+      }
+
+      // 5. Insert u KorisnikNalog
+      await connection.query(
+        `INSERT INTO KorisnikNalog
+          (korisnik_id, nalog_id, status, zatvoren, datum_zatvaranja)
+         VALUES ?`,
+        [nalogAssignments]
+      );
+    }
+
+    await connection.commit();
+
+    return {
+      addedUsers: newUserIds.length,
+      assignedNalogs: nalogs.length
+    };
+
+  } catch (error) {
+    if (connection) await connection.rollback();
+    throw error;
+  } finally {
+    if (connection) connection.release();
+  }
+};
+
+export const removeUserFromUlogaAndNaloge = async (ulogaId, korisnikId) => {
+  let connection;
+
+  try {
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    // 1. Obriši vezu korisnik–uloga
+    await connection.query(
+      `DELETE FROM KorisnikUloga 
+       WHERE korisnik_id = ? AND uloga_id = ?`,
+      [korisnikId, ulogaId]
+    );
+
+    // 2. Obriši sve naloge tog korisnika za tu ulogu
+    await connection.query(
+      `
+      DELETE kn
+      FROM KorisnikNalog kn
+      JOIN Nalog n ON n.id = kn.nalog_id
+      WHERE kn.korisnik_id = ?
+        AND n.uloga_id = ?
+      `,
+      [korisnikId, ulogaId]
+    );
+
+    await connection.commit();
+    return true;
+
+  } catch (error) {
+    if (connection) await connection.rollback();
+    throw error;
+  } finally {
+    if (connection) connection.release();
+  }
+};

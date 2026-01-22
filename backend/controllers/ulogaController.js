@@ -63,7 +63,7 @@ export const removeMember = async (req, res) => {
         
         // Samo supervizori mogu uklanjati članove, što osigurava supervisorMiddleware
 
-        const success = await ulogaService.removeMemberFromUloga(ulogaId, korisnikId);
+        const success = await ulogaService.removeUserFromUlogaAndNaloge(ulogaId, korisnikId);
         
         if (success) {
             res.status(200).json({ message: "Član uspješno uklonjen iz uloge." });
@@ -126,5 +126,32 @@ export const deleteUloga = async (req, res) => {
         }
         
         res.status(500).json({ error: "Interna greška servera pri brisanju uloge." });
+    }
+};
+
+export const addUsersToUloga = async (req, res) => {
+    const { ulogaId } = req.params;
+    const { korisnikIds } = req.body;
+
+    if (!Array.isArray(korisnikIds) || korisnikIds.length === 0) {
+        return res.status(400).json({
+            error: "korisnikIds mora biti neprazno polje."
+        });
+    }
+
+    try {
+        const result = await ulogaService.addUsersToUlogaAndAssignNaloge(
+            ulogaId,
+            korisnikIds
+        );
+
+        res.status(200).json({
+            message: "Korisnici uspješno dodani u ulogu.",
+            added: result.added
+        });
+
+    } catch (error) {
+        console.error("Greška pri dodavanju korisnika u ulogu:", error);
+        res.status(500).json({ error: "Interna greška servera." });
     }
 };

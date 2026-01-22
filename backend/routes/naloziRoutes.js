@@ -23,6 +23,7 @@ router.get("/korisnici/:korisnikId", authenticateJWT, nalogController.getKorisni
 
 router.get("/", authenticateJWT, nalogController.getAllNalozi);
 router.post("/novi", authenticateJWT, nalogController.createNalog);
+router.put("/update/:id", authenticateJWT, nalogController.updateNalog);
 router.patch("/zatvori/:id", authenticateJWT, nalogController.updateZatvoriNalog);
 
 

@@ -181,6 +181,74 @@
             </q-item>
           </q-list>
         </q-card-section>
+        <q-separator class="q-my-md" />
+
+<div class="text-subtitle2 text-primary q-mb-sm">
+  <q-icon name="person_add" size="sm" class="q-mr-xs" />
+  Dodaj nove članove
+</div>
+
+<q-select
+  filled
+  v-model="selectedUserIds"
+  :options="userOptions"
+  label="Dodijeli nove korisnike"
+  multiple
+  use-chips
+  option-value="value"
+  option-label="label"
+  emit-value
+  map-options
+  use-input
+  hide-selected
+  fill-input
+  input-debounce="500"
+  @filter="filterUsers"
+  @update:model-value="updateSelectedUsersList"
+/>
+
+<div v-if="selectedUsersList.length > 0" class="q-mt-md">
+  <div class="row q-col-gutter-sm">
+    <div
+      v-for="user in selectedUsersList"
+      :key="user.value"
+      class="col-12 col-sm-6"
+    >
+      <q-card flat bordered>
+        <q-card-section class="q-pa-sm row items-center">
+          <div class="col">
+            <div class="text-weight-medium">
+              {{ user.ime }} {{ user.prezime }}
+            </div>
+            <div class="text-caption text-grey">
+              {{ user.email }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <q-btn
+              icon="close"
+              flat
+              round
+              dense
+              size="xs"
+              color="negative"
+              @click="removeSelectedUser(user.value)"
+            />
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
+</div>
+
+<q-btn
+  class="q-mt-md"
+  color="primary"
+  label="Dodaj članove"
+  icon="group_add"
+  :disable="selectedUserIds.length === 0"
+  @click="addMembersToUloga"
+/>
         
         <q-card-actions align="right">
           <q-btn flat label="Zatvori" v-close-popup color="primary" />
@@ -333,6 +401,10 @@ export default defineComponent({
     };
 
     const openEditDialog = async (uloga) => {
+        selectedUserIds.value = [];
+        selectedUsersList.value = [];
+        userOptions.value = [];
+
       showEditDialog.value = true;
       currentUloga.value.id = uloga.id;
       currentUloga.value.naziv = uloga.naziv;
@@ -448,6 +520,37 @@ export default defineComponent({
       }
     };
 
+const addMembersToUloga = async () => {
+  try {
+    await UlogeService.addMembersToUloga(
+      currentUloga.value.id,
+      selectedUserIds.value
+    );
+
+    $q.notify({
+      type: 'positive',
+      message: 'Korisnici uspješno dodani u ulogu.'
+    });
+
+    const details = await fetchUlogaDetails(currentUloga.value.id);
+    currentUloga.value.members = details.members;
+
+    selectedUserIds.value = [];
+    selectedUsersList.value = [];
+    userOptions.value = [];
+
+    await fetchUloge();
+
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Greška pri dodavanju članova.',
+      caption: error.response?.data?.error || 'Greška na serveru.'
+    });
+  }
+};
+
+
     onMounted(() => {
       fetchUloge();
     });
@@ -470,7 +573,8 @@ export default defineComponent({
       removeSelectedUser,
       openEditDialog,
       removeMember,
-      deleteUloga, // DODAJTE OVO
+      deleteUloga,
+      addMembersToUloga 
     };
   }
 });

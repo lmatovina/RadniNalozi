@@ -109,5 +109,52 @@ export const createKorisnik = async (req, res) => {
   }
 };
 
+export const changePassword = async (req, res) => {
+  const userId = req.user.id;
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({
+      error: "Trenutna i nova lozinka su obavezne."
+    });
+  }
+
+  if (newPassword.length < 8) {
+    return res.status(400).json({
+      error: "Nova lozinka mora imati barem 8 znakova."
+    });
+  }
+
+  try {
+    const user = await korisnikService.getUserPasswordHash(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "Korisnik ne postoji." });
+    }
+
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      user.lozinka_hash
+    );
+
+    if (!isMatch) {
+      return res.status(401).json({
+        error: "Trenutna lozinka nije ispravna."
+      });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+
+    await korisnikService.updateUserPassword(userId, newHash);
+
+    res.status(200).json({
+      message: "Lozinka uspješno promijenjena."
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Greška na serveru." });
+  }
+};
 
 
