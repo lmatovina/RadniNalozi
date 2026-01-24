@@ -4,7 +4,7 @@ import { db } from '../config/db.js';
 const router = express.Router();
 
 // GET: Dohvati postavke (za onMounted u Quasaru)
-router.get('/notifications', async (req, res) => {
+router.get('/notifikacije', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM PostavkeObavijesti LIMIT 1');
     res.json(rows[0]);
@@ -14,7 +14,7 @@ router.get('/notifications', async (req, res) => {
 });
 
 // POST: Spremi promjene s frontenda
-router.post('/notifications', async (req, res) => {
+router.post('/notifikacije', async (req, res) => {
   const { dana_prije_isteka, omoguceno } = req.body;
   try {
     await db.query(
