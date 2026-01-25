@@ -255,22 +255,43 @@ export const updateNalog = async (req, res) => {
 
 export const handleEmailClosure = async (req, res) => {
     const { id } = req.params;
+    const { confirmed } = req.query; // Gledamo je li korisnik potvrdio
 
+    // Ako korisnik još NIJE potvrdio, pošalji mu stranicu za potvrdu
+    if (confirmed !== 'true') {
+        return res.send(`
+            <div style="text-align:center; font-family:sans-serif; margin-top:100px; padding: 20px;">
+                <h2 style="color: #333;">Potvrda zatvaranja naloga</h2>
+                <p>Jeste li sigurni da želite zatvoriti nalog <strong>#${id}</strong>?</p>
+                <br>
+                <a href="/api/nalozi/zatvori-direktno/${id}?confirmed=true" 
+                   style="background-color: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-right: 10px;">
+                   Da, zatvori nalog
+                </a>
+                <a href="#" onclick="window.close(); return false;" 
+                   style="background-color: #6c757d; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                   Odustani
+                </a>
+            </div>
+        `);
+    }
+
+    // Ako je confirmed === 'true', onda radimo stvarno zatvaranje
     try {
         const success = await nalogService.closeNalogById(id);
 
         if (success) {
             res.send(`
-                <div style="text-align:center; font-family:sans-serif; margin-top:50px;">
-                    <h2 style="color: #28a745;">Nalog uspješno zatvoren!</h2>
-                    <p>Status naloga #${id} je promijenjen u "Zatvoreno".</p>
+                <div style="text-align:center; font-family:sans-serif; margin-top:100px;">
+                    <h2 style="color: #28a745;">Uspješno!</h2>
+                    <p>Nalog #${id} je sada službeno <strong>Zatvoren</strong>.</p>
+                    <p style="color: #666; font-size: 0.9em;">Možete zatvoriti ovaj prozor.</p>
                 </div>
             `);
         } else {
             res.status(404).send('Nalog nije pronađen ili je već zatvoren.');
         }
     } catch (error) {
-        // Ovdje logiramo grešku, ali korisniku šaljemo općenitu poruku
-        res.status(500).send('Došlo je do interne greške na serveru.');
+        res.status(500).send('Greška na serveru prilikom zatvaranja.');
     }
 };
