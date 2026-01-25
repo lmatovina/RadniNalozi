@@ -251,3 +251,26 @@ export const updateNalog = async (req, res) => {
     return res.status(500).json({ message: "Greška servera" });
   }
 };
+
+
+export const handleEmailClosure = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const success = await nalogService.closeNalogById(id);
+
+        if (success) {
+            res.send(`
+                <div style="text-align:center; font-family:sans-serif; margin-top:50px;">
+                    <h2 style="color: #28a745;">Nalog uspješno zatvoren!</h2>
+                    <p>Status naloga #${id} je promijenjen u "Zatvoreno".</p>
+                </div>
+            `);
+        } else {
+            res.status(404).send('Nalog nije pronađen ili je već zatvoren.');
+        }
+    } catch (error) {
+        // Ovdje logiramo grešku, ali korisniku šaljemo općenitu poruku
+        res.status(500).send('Došlo je do interne greške na serveru.');
+    }
+};

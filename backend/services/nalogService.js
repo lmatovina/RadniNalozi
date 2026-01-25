@@ -526,3 +526,18 @@ export const getKasniNaloziZaExport = async () => {
   return rows;
 };
 
+export const closeNalogById = async (id) => {
+    try {
+        const [result] = await db.query(
+            'UPDATE Nalog SET status = "Zatvoren" WHERE id = ?',
+            [id]
+        );
+        
+        // Vraćamo true ako je barem jedan redak ažuriran, inače false
+        return result.affectedRows > 0;
+    } catch (error) {
+        console.error('Greška u nalogService (closeNalogById):', error);
+        throw error; // Bacamo grešku dalje da je kontroler može uloviti
+    }
+};
+
