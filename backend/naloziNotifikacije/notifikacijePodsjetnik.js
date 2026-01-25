@@ -3,7 +3,7 @@ import { findOrdersForNotifications } from './repository/nalogRepository.js';
 import { sendReminder } from './service/mailService.js';
 import { db } from '../config/db.js'; 
 
-cron.schedule('* * * * *', async () => {
+cron.schedule('0 8 * * *', async () => {  // minute//sati//dan u mjesecu//mjesec//dan u tjednu
   console.log('--- Provjera automatizacije ---');
 
   try {

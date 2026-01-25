@@ -66,7 +66,7 @@ const postavke = ref({
 // Dohvati trenutne vrijednosti iz baze pri učitavanju stranice
 const fetchSettings = async () => {
   try {
-    const response = await api.get('/postavke/notifikacije');
+    const response = await api.get('api/postavke/notifikacije');
     if (response.data) {
       postavke.value = {
         ...response.data,
@@ -82,7 +82,7 @@ const fetchSettings = async () => {
 const saveSettings = async () => {
   submitting.value = true;
   try {
-    await api.post('/postavke/notifikacije', {
+    await api.post('api/postavke/notifikacije', {
       dana_prije_isteka: postavke.value.dana_prije_isteka,
       omoguceno: postavke.value.omoguceno ? 1 : 0
     });
