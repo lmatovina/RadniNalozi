@@ -55,48 +55,6 @@
     </div>
 
 </div>
-
-
-
-    <div class="q-mt-xl">
-      <div class="text-h6 q-mb-md">Brze Akcije</div>
-
-      <div class="row q-col-gutter-md">
-
-        <div class="col-12 col-md-4">
-          <q-btn
-            color="primary"
-            class="full-width"
-            label="Dodaj kategoriju"
-            @click="goToCategories"
-          />
-        </div>
-
-        <div class="col-12 col-md-4">
-          <q-btnq
-            color="primary"
-            class="full-width"
-            label="Dodaj naloge za godinu"
-            @click="goToOrders"
-          />
-        </div>
-
-        <div class="col-12 col-md-4">
-          <q-btn
-            color="primary"
-            class="full-width"
-            label="Postavi pravila notifikacija"
-            @click="goToNotifications"
-          />
-        </div>
-
-
-
-      </div>
-
-      
-    </div>
-
   </q-page>
 </template>
 
@@ -106,15 +64,6 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-function goToCategories() {
-  router.push('/kategorije')
-}
-function goToOrders() {
-  router.push('/nalozi')
-}
-function goToNotifications() {
-  router.push('/notifikacije-pravila')
-}
 
  
 function go(section) {
