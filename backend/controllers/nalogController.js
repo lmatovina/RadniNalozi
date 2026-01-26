@@ -107,6 +107,33 @@ export const getTipoviNaloga = async (req, res) => {
   }
 };
 
+export const createTipNaloga = async (req, res) => {
+  try {
+    const result = await nalogService.createTipNaloga(req.body);
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const updateTipNaloga = async (req, res) => {
+  try {
+    const result = await nalogService.updateTipNaloga(req.params.id, req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const deleteTipNaloga = async (req, res) => {
+  try {
+    await nalogService.deleteTipNaloga(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const getUloge = async (req, res) => {
   try {
     const uloge = await nalogService.getAllUloge()

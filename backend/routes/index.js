@@ -14,6 +14,7 @@ router.use("/korisnici", korisniciRoute);
 router.use("/uloge", ulogeRoute);
 router.use("/tipovi-naloga", tipoviNalogaRoute);
 router.use("/postavke", postavkeRoute);
+router.use('/tipovi-naloga', tipoviNalogaRoute);
 /*
 router.get("/nalozi", nalogController.getAllNalozi);
 router.get("/nalozi/:id", nalogController.getNalogById);

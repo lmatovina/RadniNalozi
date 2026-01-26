@@ -363,6 +363,20 @@ export const getAllTipoviNaloga = async () => {
   return rows
 }
 
+export const createTipNaloga = async (data) => {
+  const [result] = await db.query("INSERT INTO TipNaloga (naziv) VALUES (?)", [data.naziv]);
+  return { id: result.insertId, ...data };
+};
+
+export const updateTipNaloga = async (id, data) => {
+  await db.query("UPDATE TipNaloga SET naziv = ? WHERE id = ?", [data.naziv, id]);
+  return { id, ...data };
+};
+
+export const deleteTipNaloga = async (id) => {
+  return await db.query("DELETE FROM TipNaloga WHERE id = ?", [id]);
+};
+
 export const getAllUloge = async () => {
   const [rows] = await db.query(`
     SELECT id, naziv

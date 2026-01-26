@@ -13,17 +13,17 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     meta: { requiresSupervisor: true },
     children: [
-    { 
-      path: '', 
-      component: () => import('pages/AdminDashboard.vue'),
-      meta: { requiresSupervisor: true } 
-    }
-  ]
+      {
+        path: '',
+        component: () => import('pages/AdminDashboard.vue'),
+        meta: { requiresSupervisor: true }
+      }
+    ]
   },
 
-  
+
   {
-    
+
     path: '/nalozi',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -33,47 +33,45 @@ const routes = [
       { path: 'kasni', component: () => import('pages/nalozi/NaloziKasne.vue') },
       { path: 'zavrseni-kasni', component: () => import('pages/nalozi/NaloziZavrseniKasno.vue') },
       { path: 'novi', component: () => import('pages/nalozi/NaloziCrud.vue') }
-      
+
     ]
   },
 
-{
-  path: '/admin', 
-  component: () => import('layouts/MainLayout.vue'), 
-  children: [
-    
-    { 
-      path: 'admin-list', 
-      component: () => import('pages/admin/AdminList.vue') 
-    },
-
-    {
-      path: 'uloge-manager', 
-      component: () => import('pages/admin/UlogeManager.vue') 
-    },
-    
-  ]
-},
-
-  
   {
-    path: '/notifikacije',
+    path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'tjedan', component: () => import('pages/notifikacije/NotifikacijeTjedan.vue') }
+
+      {
+        path: 'admin-list',
+        component: () => import('pages/admin/AdminList.vue')
+      },
+
+      {
+        path: 'uloge-manager',
+        component: () => import('pages/admin/UlogeManager.vue')
+      },
+
     ]
   },
+
+
 
 
   {
     path: '/kategorije',
     component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresSupervisor: true }, // Vjerojatno želiš da samo admini ovo vide
     children: [
-      { path: '', component: () => import('pages/kategorije/KategorijeIndex.vue') }
+      {
+        path: '',
+        name: 'tipovi-naloga',
+        component: () => import('pages/kategorije/KategorijeIndex.vue')
+      }
     ]
   },
 
- 
+
   {
     path: '/notifikacije-pravila',
     component: () => import('layouts/MainLayout.vue'),
@@ -90,7 +88,7 @@ const routes = [
     ]
   },
 
-  
+
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue')
