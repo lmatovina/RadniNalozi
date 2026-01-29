@@ -8,22 +8,32 @@ const routes = [
     ]
   },
 
+  // SVE ADMIN STVARI NA JEDNOM MJESTU
   {
     path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requiresSupervisor: true },
+    meta: { requiresSupervisor: true }, // Zaključavamo cijelu admin granu
     children: [
       {
-        path: '',
-        component: () => import('pages/AdminDashboard.vue'),
-        meta: { requiresSupervisor: true }
+        path: '', 
+        component: () => import('pages/AdminDashboard.vue') 
+      },
+      {
+        path: 'admin-list',
+        component: () => import('pages/admin/AdminList.vue')
+      },
+      {
+        path: 'uloge-manager',
+        component: () => import('pages/admin/UlogeManager.vue')
+      },
+      {
+        path: 'nova-godina', 
+        component: () => import('pages/admin/NovaGodina.vue')
       }
     ]
   },
 
-
   {
-
     path: '/nalozi',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -33,35 +43,13 @@ const routes = [
       { path: 'kasni', component: () => import('pages/nalozi/NaloziKasne.vue') },
       { path: 'zavrseni-kasni', component: () => import('pages/nalozi/NaloziZavrseniKasno.vue') },
       { path: 'novi', component: () => import('pages/nalozi/NaloziCrud.vue') }
-
     ]
   },
-
-  {
-    path: '/admin',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-
-      {
-        path: 'admin-list',
-        component: () => import('pages/admin/AdminList.vue')
-      },
-
-      {
-        path: 'uloge-manager',
-        component: () => import('pages/admin/UlogeManager.vue')
-      },
-
-    ]
-  },
-
-
-
 
   {
     path: '/kategorije',
     component: () => import('layouts/MainLayout.vue'),
-    meta: { requiresSupervisor: true }, // Vjerojatno želiš da samo admini ovo vide
+    meta: { requiresSupervisor: true },
     children: [
       {
         path: '',
@@ -70,7 +58,6 @@ const routes = [
       }
     ]
   },
-
 
   {
     path: '/notifikacije-pravila',
@@ -87,7 +74,6 @@ const routes = [
       { path: '', component: () => import('pages/ProfilManage.vue') }
     ]
   },
-
 
   {
     path: '/:catchAll(.*)*',

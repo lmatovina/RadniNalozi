@@ -5,6 +5,7 @@ import korisniciRoute from "./korisniciRoute.js";
 import ulogeRoute from "./ulogeRoute.js";
 import tipoviNalogaRoute from "./tipoviNalogaRoutes.js";
 import postavkeRoute from "./postavkeNotifikacijaRoute.js";
+import godinaRoutes from "./godinaRoutes.js";
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.use("/uloge", ulogeRoute);
 router.use("/tipovi-naloga", tipoviNalogaRoute);
 router.use("/postavke", postavkeRoute);
 router.use('/tipovi-naloga', tipoviNalogaRoute);
+router.use("/godine", godinaRoutes);
 /*
 router.get("/nalozi", nalogController.getAllNalozi);
 router.get("/nalozi/:id", nalogController.getNalogById);

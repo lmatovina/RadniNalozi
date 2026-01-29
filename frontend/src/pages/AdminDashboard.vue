@@ -54,6 +54,21 @@
         </q-card>
     </div>
 
+    <div class="col-12 col-md-3">
+    <q-card class="q-pa-md dashboard-card cursor-pointer" 
+            clickable 
+            v-ripple 
+            @click="go('nova-godina')">
+      <div class="row items-center">
+        <q-icon name="calendar_today" color="primary" size="lg" class="q-mr-md" />
+        <div>
+          <div class="text-subtitle1">Otvaranje nove godine</div>
+          <div class="text-caption text-grey-7">Kopiranje naloga u novu godinu</div>
+        </div>
+      </div>
+    </q-card>
+  </div>
+
 </div>
   </q-page>
 </template>
@@ -101,6 +116,12 @@ function go(section) {
     router.push('/nalozi/zavrseni-kasni')
     return
   }
+
+
+  if (section === 'nova-godina') {
+  router.push('/admin/nova-godina')
+  return
+}
 
   //router.push(/nalozi/${section})
 }
