@@ -62,6 +62,7 @@ const routes = [
   {
     path: '/notifikacije-pravila',
     component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresSupervisor: true },
     children: [
       { path: '', component: () => import('pages/notifikacije/NotifikacijePravila.vue') }
     ]

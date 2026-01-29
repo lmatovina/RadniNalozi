@@ -32,8 +32,8 @@
   </div>
 
   <div class="col-12 col-md-3">
-    <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('notifikacije-tjedan')">
-      <div class="text-subtitle1">Notifikacije poslane ovaj tjedan</div>
+    <q-card class="q-pa-md dashboard-card cursor-pointer" clickable v-ripple @click="go('notifikacije-pravila')">
+      <div class="text-subtitle1">Notifikacije pravila</div>
     </q-card>
   </div>
   <div class="col-12 col-md-3">
@@ -82,8 +82,8 @@ const router = useRouter()
 
  
 function go(section) {
-  if (section === 'notifikacije-tjedan') {
-    router.push('/notifikacije/tjedan')
+  if (section === 'notifikacije-pravila') {
+    router.push('/notifikacije-pravila')
     return
   }
 
@@ -116,6 +116,7 @@ function go(section) {
     router.push('/nalozi/zavrseni-kasni')
     return
   }
+  
 
 
   if (section === 'nova-godina') {

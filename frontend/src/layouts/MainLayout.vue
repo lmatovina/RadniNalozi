@@ -25,14 +25,14 @@
           <q-item-section>Nalozi</q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/kategorije">
+        <q-item clickable v-ripple to="/kategorije" v-if="isSupervizor">
           <q-item-section avatar>
             <q-icon name="category" />
           </q-item-section>
           <q-item-section>Kategorije</q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/notifikacije-pravila">
+        <q-item clickable v-ripple to="/notifikacije-pravila" v-if="isSupervizor">
           <q-item-section avatar>
             <q-icon name="notifications" />
           </q-item-section>
