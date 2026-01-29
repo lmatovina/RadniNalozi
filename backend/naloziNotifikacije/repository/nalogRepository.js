@@ -19,7 +19,7 @@ export async function findOrdersForNotifications() {
        AND n.rok_zavrsetka BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
        AND (
             n.zadnji_podsjetnik IS NULL
-            OR n.zadnji_podsjetnik < DATE_SUB(NOW(), INTERVAL 1 MONTH)
+            OR n.zadnji_podsjetnik < DATE_SUB(NOW(), INTERVAL 14 DAY)
           )`,
     [days]
   );
